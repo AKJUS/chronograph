@@ -102,6 +102,9 @@ export class ReferenceBucketIdentifier extends Mixin(
         addToBucket (transaction : Transaction, entity : Entity) {
             const quark         = transaction.getWriteTarget(this) as ReferenceBucketQuark
 
+            // @ts-ignore
+            this.field.onAddToBucket?.call(this.self, entity, transaction)
+
             quark.mutations.push({ type : BucketMutationType.Add, entity })
 
             const baseRevision  = transaction.baseRevision
@@ -115,6 +118,9 @@ export class ReferenceBucketIdentifier extends Mixin(
 
             // if bucket is already removed - no need to remove from it
             if (preQuark && preQuark.getValue() === TombStone) return
+
+            // @ts-ignore
+            this.field.onRemoveFromBucket?.call(this.self, entity, transaction)
 
             const quark         = transaction.getWriteTarget(this) as ReferenceBucketQuark
 
